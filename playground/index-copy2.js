@@ -176,3 +176,13 @@ app.delete('/tasks/:id', async (req, res) => {
         res.status(500).send(e)
     }
 })
+
+// const pet = {
+//     name: 'Jal'
+// }
+
+// pet.toJSON = function () {
+//     console.log(this)
+//     return this
+// }
+// console.log(JSON.stringify(pet))
