@@ -16,6 +16,8 @@ const taskSchema = new mongoose.Schema({
         ref: 'Users'
        
     }
+}, {
+    timestamps: true
 })
 
 const Task = mongoose.model('Tasks', taskSchema)
