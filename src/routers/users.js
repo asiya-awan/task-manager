@@ -2,7 +2,7 @@ const express = require('express')
 const router = new express.Router()
 const User = require('../models/user')
 const auth = require('../middleware/auth')
-const Task = require('./task')
+
 
 
 // ME
@@ -54,8 +54,6 @@ router.delete('/users/me', auth, async (req, res) => {
 
 
 //USERS
-
-//Delate user tasks when user is removed
 
 
 router.post('/users', async (req, res) => {

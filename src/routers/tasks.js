@@ -27,7 +27,7 @@ router.post('/tasks', auth, async (req, res) => {
 router.get('/tasks', auth, async(req, res) => {
     try{
         //const tasks = await Task.find({owner: req.user._id})
-        //console.log(tasks)
+        //console.log("from Tasks:", req.user)
         //res.send(tasks)
 
         //alternateive
