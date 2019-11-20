@@ -3,6 +3,8 @@ const router = new express.Router()
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const multer = require('multer')
+const sharp = require('sharp')
+const { sendWelcomeEmail, sendCancelationEmail} = require('../emails/account')
 
 // ME
 router.get('/users/me', auth, async (req, res) => {
@@ -44,6 +46,9 @@ router.delete('/users/me', auth, async (req, res) => {
     try {
         // can also use 'remove' method on mongoose doc just like 'save()'
         await req.user.remove()
+
+        sendCancelationEmail(req.user.email, req.user.name)
+        console.log('Sent email')
         res.send(req.user)
     } catch (e) {
         res.status(500).send(e)
@@ -60,6 +65,8 @@ router.post('/users', async (req, res) => {
 
         const user = new User(req.body)
         await user.save()
+
+        sendWelcomeEmail(user.email, user.name)
         const token = await user.generateAuthToken()
 
         res.status(201).send({user, token})
@@ -202,8 +209,15 @@ const upload = multer({
 })
 
 router.post('/users/me/avatar',auth, upload.single('avatar'), async (req, res) => {
-    console.log("req.file: ", req.file)
-    req.user.avatar = req.file.buffer
+    //console.log("req.file: ", req.file)
+
+    const resizedImage = await sharp(req.file.buffer)
+                                        .resize({width:300, height:200})  //resize(300, 200)
+                                        .toFormat('png')  //.png()
+                                        .toBuffer()
+
+    req.user.avatar = resizedImage
+
     await req.user.save()
     res.send()
 }, (error, req, res, next) => {
@@ -211,4 +225,28 @@ router.post('/users/me/avatar',auth, upload.single('avatar'), async (req, res) =
 
 })
 
+router.delete('/users/me/avatar', auth, async (req, res) => {
+
+    req.user.avatar = undefined
+    await req.user.save()
+    res.send()
+})
+
+
+router.get('/users/:id/avatar', async (req, res) => {
+  
+    try {
+
+        const user = await User.findById(req.params.id)
+        if(!user || !user.avatar) {
+            throw new Error('user or users avatar do not exist')
+        }
+
+        res.set('Content-Type','image/png')  
+        res.send(user.avatar)
+    }
+    catch (e) {
+        res.status(404).send(e.message)
+    }
+})
 module.exports = router
