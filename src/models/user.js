@@ -81,12 +81,12 @@ userSchema.virtual('tasks', {
 
 userSchema.methods.toJSON =  function () {
     const user = this
-    console.log("User: ",user)
+    //console.log("User: ",user)
     const userObject =  user.toObject()
     delete userObject.password
     delete userObject.tokens
     delete userObject.avatar
-    console.log("userObject: ", userObject)
+    //console.log("userObject: ", userObject)
 
     return userObject
 }

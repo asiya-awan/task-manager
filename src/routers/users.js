@@ -30,9 +30,9 @@ router.patch('/users/me', auth,  async (req, res) => {
 
         await user.save()
 
-        if (!user) {
-            return res.status(404).send()
-        }
+        // if (!user) {
+        //     return res.status(404).send()
+        // }
 
         res.send(user)
     } catch (e) {
@@ -249,4 +249,7 @@ router.get('/users/:id/avatar', async (req, res) => {
         res.status(404).send(e.message)
     }
 })
+
+
 module.exports = router
+
